@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>TikTok Login</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  .code { font: 15px/1.5 ui-monospace, Consolas, monospace; word-break: break-all; padding: 14px; border: 1px solid var(--line); border-radius: 10px; margin: 12px 0; }
+  button { font: inherit; padding: 10px 18px; border-radius: 10px; border: 0; background: var(--accent); color: #fff; cursor: pointer; }
+  .err { color: var(--accent); }
+</style>
+</head>
+<body>
+<main>
+  <nav><a href="./">Home</a><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms of Service</a></nav>
+  <h1>TikTok Login</h1>
+  <div id="out"><p>Einen Moment …</p></div>
+</main>
+<script>
+// TikTok sends the user back here with ?code=...&state=... after "Allow".
+// Nothing is sent anywhere: the page only shows the code so it can be pasted into the local tool.
+const q = new URLSearchParams(location.search);
+const out = document.getElementById('out');
+const code = q.get('code'), err = q.get('error');
+if (code) {
+  out.innerHTML = '<p>Fertig. Kopiere diesen Code und füge ihn im schwarzen Fenster ein, dort wo <strong>Code:</strong> steht:</p>' +
+    '<div class="code" id="c"></div><button id="b">Code kopieren</button><p class="lead">Der Code gilt nur wenige Minuten und nur einmal.</p>';
+  document.getElementById('c').textContent = code;
+  document.getElementById('b').onclick = async () => {
+    try { await navigator.clipboard.writeText(code); document.getElementById('b').textContent = 'Kopiert'; }
+    catch (e) { document.getElementById('b').textContent = 'Bitte von Hand markieren und kopieren'; }
+  };
+} else {
+  out.innerHTML = '<p class="err">Kein Code erhalten.</p><p></p>';
+  out.lastChild.textContent = err ? ('TikTok meldet: ' + err + ' ' + (q.get('error_description') || '')) : 'Bitte den Login im schwarzen Fenster neu starten.';
+}
+</script>
+</body>
+</html>
